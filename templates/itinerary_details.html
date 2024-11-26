@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Itinerary Details</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Selected Itinerary</h1>
+
+        <div class="itinerary-details">
+            <h2>{{ itinerary.title }}</h2>
+            <p>{{ itinerary.description }}</p>
+        </div>
+
+        <div class="weather">
+            <h2>Weather Information</h2>
+            <p><strong>Temperature:</strong> {{ weather.temperature }}</p>
+            <p><strong>Condition:</strong> {{ weather.condition }}</p>
+        </div>
+
+        <div class="packing-list">
+            <h2>Important Things to Pack</h2>
+            <ul>
+                {% for item in packing_list %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="video-section">
+            <h2>Visit your {{ itinerary.title }} virtually:</h2>
+            <img src="/static/images/video_placeholder.jpg" alt="Video Thumbnail" class="video-thumbnail" onclick="openVideoModal()">
+            <div class="modal" id="video-modal">
+                <video controls autoplay>
+                    <source src="/static/video/sample.mp4" type="video/mp4">
+                </video>
+                <button onclick="closeVideoModal()">Close</button>
+            </div>
+        </div>
+
+        <div class="downloads">
+            <button>Download Itinerary</button>
+            <button>Download Video</button>
+        </div>
+
+        <div class="done-button">
+            <form action="/" method="get">
+                <button type="submit">Done</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    function openVideoModal() {
+        document.getElementById('video-modal').style.display = 'block';
+    }
+
+    function closeVideoModal() {
+        document.getElementById('video-modal').style.display = 'none';
+    }
+</script>
+</html>

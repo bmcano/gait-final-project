@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Plan Your Dream Trip</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Plan Your Dream Trip</h1>
+        <form action="/itineraries" method="post" class="trip-form">
+            <div class="form-group">
+                <label for="destination">Destination:</label>
+                <input type="text" id="destination" name="destination" placeholder="Enter your destination" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fromDate">From Date:</label>
+                <input type="text" id="fromDate" name="fromDate" placeholder="Select start date" class="date-picker" required>
+            </div>
+
+            <div class="form-group">
+                <label for="toDate">To Date:</label>
+                <input type="text" id="toDate" name="toDate" placeholder="Select end date" class="date-picker" required>
+            </div>
+
+            <button type="submit" class="submit-button">View Itineraries</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script>
+        // Initialize Flatpickr for date picking
+        flatpickr(".date-picker", {
+            dateFormat: "Y-m-d"
+        });
+    </script>
+</body>
+</html>

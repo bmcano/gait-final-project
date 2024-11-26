@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Choose Your Itinerary</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Choose Your Itinerary</h1>
+        <p><strong>Destination:</strong> {{ destination }}</p>
+        <p><strong>Travel Dates:</strong> {{ travel_dates }}</p>
+        <p><strong>Trip Duration:</strong> {{ trip_duration }} days</p>
+
+        <div class="scrollable-cards">
+            {% for itinerary in itineraries %}
+            <div class="card">
+                <h2>{{ itinerary.title }}</h2>
+                <p>{{ itinerary.description }}</p>
+                <form action="/itinerary_details" method="post">
+                    <input type="hidden" name="selected_index" value="{{ loop.index0 }}">
+                    <button type="submit">Select</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="done-button">
+            <form action="/" method="get">
+                <button type="submit">Done</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
