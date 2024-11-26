@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Plan Your Dream Trip</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Material UI components -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mui/material@latest/dist/material.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <!-- Our styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .header {
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
+    <header class="header">
+        <h1>AI-Powered Travel Itinerary Planner</h1>
+        <p>Plan your perfect trip effortlessly with personalized itineraries, visual previews, and real-time weather updates.</p>
+    </header>
+
     <div class="container">
-        <h1>Plan Your Dream Trip</h1>
+        <h2 style="text-align: center;">Plan Your Dream Trip</h2>
         <form action="/itineraries" method="post" class="trip-form">
             <div class="form-group">
                 <label for="destination">Destination:</label>
@@ -15,8 +31,14 @@
             </div>
 
             <div class="form-group">
+                <label for="destination">Trip Description:</label>
+                <input type="text" id="description" name="description" placeholder="Describe your trip in detail (optional)">
+            </div>
+
+            <div class="form-group">
                 <label for="fromDate">From Date:</label>
-                <input type="text" id="fromDate" name="fromDate" placeholder="Select start date" class="date-picker" required>
+                <input type="text" id="fromDate" name="fromDate" placeholder="Select start date" class="date-picker"
+                    required>
             </div>
 
             <div class="form-group">
@@ -36,4 +58,5 @@
         });
     </script>
 </body>
+
 </html>
