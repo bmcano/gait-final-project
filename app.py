@@ -71,8 +71,9 @@ def itinerary_details():
     Page showing detailed itinerary, weather, and packing suggestions.
     """
     # Extract selected itinerary (index of selected card)
-    selected_index = int(request.form['selected_index'])
-    selected_itinerary = MOCK_ITINERARIES[selected_index]
+    selected_index = request.form.get('selected_indices', '')
+    selected_indices = [int(idx) for idx in selected_index.split(',') if idx.isdigit()]
+    selected_itineraries = [MOCK_ITINERARIES[idx] for idx in selected_indices]
 
     # Mock packing list
     # TODO: Use ChatGPT to dynamically generate packing suggestions based on destination, weather, and itinerary.
@@ -89,7 +90,7 @@ def itinerary_details():
     # Pass mock or generated data to the template
     return render_template(
         'itinerary_details.html',
-        itinerary=selected_itinerary,
+        itinerary=selected_itineraries,
         weather=MOCK_WEATHER_INFO,  # Replace with dynamic weather_info once integrated
         packing_list=packing_list,
         images=generated_images  # Pass generated images here

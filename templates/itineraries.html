@@ -1,34 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Choose Your Itinerary</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Choose Your Itinerary</h1>
-        <p><strong>Destination:</strong> {{ destination }}</p>
-        <p><strong>Travel Dates:</strong> {{ travel_dates }}</p>
-        <p><strong>Trip Duration:</strong> {{ trip_duration }} days</p>
+        <div class="trip-info">
+            <p><strong>Destination:</strong> {{ destination }}</p>
+            <p><strong>Travel Dates:</strong> {{ travel_dates }}</p>
+            <p><strong>Trip Duration:</strong> {{ trip_duration }} days</p>
+        </div>
 
         <div class="scrollable-cards">
             {% for itinerary in itineraries %}
-            <div class="card">
-                <h2>{{ itinerary.title }}</h2>
-                <p>{{ itinerary.description }}</p>
-                <form action="/itinerary_details" method="post">
-                    <input type="hidden" name="selected_index" value="{{ loop.index0 }}">
-                    <button type="submit">Select</button>
-                </form>
+            <div class="card" data-index="{{ loop.index0 }}">
+                <div class="card-header">
+                    <input type="checkbox" class="checkbox" data-index="{{ loop.index0 }}">
+                    <div class="title-section">
+                        <h2>{{ itinerary.title }}</h2>
+                        <!-- <p class="attraction-name">Name of attraction/activity</p> -->
+                    </div>
+                </div>
+                <img src="{{ itinerary.image }}" alt="{{ itinerary.title }}" class="itinerary-image">
+                <p class="description">{{ itinerary.description }}</p>
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="done-button">
-            <form action="/" method="get">
-                <button type="submit">Done</button>
+            <form action="/itinerary_details" method="post" id="doneForm">
+                <input type="hidden" name="selected_indices" id="selectedIndices">
+                <button type="submit" class="submit-button">Done</button>
             </form>
         </div>
     </div>
+
+    <script>
+        // JavaScript to handle card selection
+        const selectedIndices = new Set();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Add change event listener to all checkboxes
+            document.querySelectorAll(".checkbox").forEach((checkbox) => {
+                checkbox.addEventListener("change", (event) => {
+                    const index = checkbox.getAttribute("data-index");
+                    const card = document.querySelector(`.card[data-index='${index}']`);
+
+                    if (checkbox.checked) {
+                        selectedIndices.add(index);
+                        card.classList.add("selected");
+                    } else {
+                        selectedIndices.delete(index);
+                        card.classList.remove("selected");
+                    }
+
+                    // Update the hidden input field for form submission
+                    document.getElementById("selectedIndices").value = Array.from(selectedIndices).join(",");
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

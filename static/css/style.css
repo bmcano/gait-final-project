@@ -9,7 +9,7 @@ body {
 
 /* Container styling */
 .container {
-    max-width: 640px;
+    max-width: 720px;
     margin: 32px auto;
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -89,12 +89,19 @@ button:hover {
     margin: 20px 0;
 }
 
+.trip-info p {
+    margin: 0;
+    padding: 4px 0;
+    font-size: 16px;
+}
+
 /* Horizontal Scrollable Cards */
 .scrollable-cards {
     display: flex;
+    margin-top: 16px;
     overflow-x: auto;
-    padding: 10px 0;
-    gap: 20px;
+    padding: 16px 0;
+    gap: 16px;
 }
 
 .scrollable-cards::-webkit-scrollbar {
@@ -113,17 +120,79 @@ button:hover {
 .card {
     flex: 0 0 300px;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 16px;
     background: #fff;
-    text-align: center;
+    text-align: left;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
 .card:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card.selected {
+    border-color: #007bff;
+    background-color: #eaf4ff;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between checkbox and title */
+    margin-bottom: 12px;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.title-section h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.attraction-name {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.itinerary-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.description {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.select-button {
+    padding: 10px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.select-button:hover {
+    background: #0056b3;
 }
 
 /* Video Thumbnail */

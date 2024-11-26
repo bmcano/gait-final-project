@@ -11,7 +11,7 @@ MOCK_WEATHER_INFO = {
 }
 
 MOCK_ITINERARIES = [
-    {"title": "Relax in the city", "description": "A slow-paced trip exploring the best cafes, museums, and parks."},
-    {"title": "Adventure and Outdoors", "description": "Hiking, kayaking, and exploring the wilderness of the region."},
-    {"title": "Cultural Exploration", "description": "Visit famous landmarks, historical sites, and cultural experiences."}
+    {"title": "Relax in the city", "description": "A slow-paced trip exploring the best cafes, museums, and parks.", "image": "/static/mock_images/relax_in_city.webp"},
+    {"title": "Adventure and Outdoors", "description": "Hiking, kayaking, and exploring the wilderness of the region.", "image": "/static/mock_images/adventure_outdoors.webp"},
+    {"title": "Cultural Exploration", "description": "Visit famous landmarks, historical sites, and cultural experiences.", "image": "/static/mock_images/cultural_exploration.webp"}
 ]
