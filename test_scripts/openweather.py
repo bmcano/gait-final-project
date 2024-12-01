@@ -52,14 +52,8 @@ def get_weather_data(address, start_date, end_date):
     return results
 
 def process_weather_data(weather_data):
-    processed_data = []
-    for day_data in weather_data:
-        # Extract relevant data for each day
-        date = datetime.utcfromtimestamp(day_data["dt"]).strftime('%Y-%m-%d')
-        temperature = day_data["main"]["temp"]
-        condition = day_data["weather"][0]["description"]
-        processed_data.append({"date": date, "temperature": temperature, "condition": condition})
-    return processed_data
+    #TODO: Process the weather data to extract relevant information
+    return None
 
 city = "paris"
 latitude, longitude = get_lat_lon(city)
