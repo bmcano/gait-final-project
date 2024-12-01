@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 import time
+from config import DEMO_MODE, MOCK_WEATHER_INFO
 from secret import WEATHER_API_KEY
 from geopy.geocoders import Nominatim
 
@@ -22,9 +23,6 @@ def get_weather_data(address, start_date, end_date):
         }
 
     # Live API call logic
-    import requests
-    from datetime import datetime
-    import time
 
     base_url = "https://history.openweathermap.org/data/2.5/history/city"
     results = []
