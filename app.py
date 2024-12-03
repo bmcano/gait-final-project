@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import os
 from datetime import datetime
 import replicate
-from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_WEATHER_INFO
+from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDOES, MOCK_WEATHER_INFO
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -88,13 +88,19 @@ def itinerary_details():
         os.path.join(app.config['IMAGE_FOLDER'], 'image2.jpg')
     ]
 
+    if DEMO_MODE:
+        generated_video = MOCK_VIDOES
+    else:
+        generated_video = [] # TODO
+
     # Pass mock or generated data to the template
     return render_template(
         'itinerary_details.html',
         itinerary=selected_itineraries,
         weather=MOCK_WEATHER_INFO,  # Replace with dynamic weather_info once integrated
         packing_list=packing_list,
-        images=generated_images  # Pass generated images here
+        images=generated_images,  # Pass generated images here
+        video=generated_video
     )
 
 # TODO: Define the generate_image function
