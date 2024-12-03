@@ -2,5 +2,6 @@ flask
 ffmpeg
 requests
 geopy
-replicate
 python-dotenv
+runwayml
+openai==0.28

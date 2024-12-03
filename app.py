@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request
 import os
 from datetime import datetime
-import replicate
-from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_WEATHER_INFO
+from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDOES, MOCK_WEATHER_INFO
 from dotenv import load_dotenv
+import time
+from runwayml import RunwayML
+import base64
+import requests
 
 app = Flask(__name__)
 
@@ -88,13 +91,19 @@ def itinerary_details():
         os.path.join(app.config['IMAGE_FOLDER'], 'image2.jpg')
     ]
 
+    if DEMO_MODE:
+        generated_video = MOCK_VIDOES
+    else:
+        generated_video = [] # TODO
+
     # Pass mock or generated data to the template
     return render_template(
         'itinerary_details.html',
         itinerary=selected_itineraries,
         weather=MOCK_WEATHER_INFO,  # Replace with dynamic weather_info once integrated
         packing_list=packing_list,
-        images=generated_images  # Pass generated images here
+        images=generated_images,  # Pass generated images here
+        video=generated_video
     )
 
 # TODO: Define the generate_image function
@@ -113,7 +122,7 @@ def generate_image(prompt, num_images=5):
     # 2. Save the returned images to app.config['IMAGE_FOLDER'].
     # 3. Return the list of file path.
 
-def generate_video(image_path, output_filename):
+def generate_runway_video(image_path, image_tpye, output_filename):
     """
     Generate a drone-like hovering video from an input image using the Replicate API.
     :image_path: The file path to the image to convert to a video 
@@ -123,19 +132,49 @@ def generate_video(image_path, output_filename):
         print("using file in DEMO_MODE")
         return
 
-    image = open(image_path, "rb")
-    output = replicate.run(
-        "ali-vilab/i2vgen-xl:5821a338d00033abaaba89080a17eb8783d9a17ed710a6b4246a18e0900ccad4",
-        input = {
-            "image": image,
-            "prompt": "Drone-like hovering movement of the given scene",
-            "max_frames": 8,
-        }
+    client = RunwayML()
+    print("start")
+    # Create a new image-to-video task using the "gen3a_turbo" model
+    base64_image = encode_image_to_base64(image_path)
+    task = client.image_to_video.create(
+        model='gen3a_turbo',
+        # Point this at your own image file
+        prompt_image=f"data:image/{image_tpye};base64,{base64_image}",
+        prompt_text='Drone-like hovering movement of the given scene',
+        duration=5
     )
+    task_id = task.id
 
-    with open(f"temp/video/{output_filename}.mp4", "wb") as file:
-        file.write(output.read())
-    print("Video saved")
+    # Poll the task until it's complete
+    time.sleep(10)
+    task = client.tasks.retrieve(task_id)
+    while task.status not in ['SUCCEEDED', 'FAILED']:
+        time.sleep(10)
+        task = client.tasks.retrieve(task_id)
+
+    print('Task complete:', task)
+    save_video(task.output[0], output_filename)
+
+"""
+Helper functions relating to video generation 
+"""
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+    return encoded_string
+
+def save_video(video_url, output_filename):
+    # Send a GET request to the video URL
+    response = requests.get(video_url, stream=True)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Open a file in binary write mode and save the video content
+        with open(f"temp/video/{output_filename}.mp4", "wb") as video_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                video_file.write(chunk)
+        print("Video saved.")
+    else:
+        print(f"Failed to save video. Status code: {response.status_code}, Error: {response.text}")
 
 
 if __name__ == '__main__':

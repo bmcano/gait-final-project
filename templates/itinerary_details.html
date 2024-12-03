@@ -29,35 +29,30 @@
         </div>
 
         <div class="video-section">
-            <h2>Visit your {{ itinerary.title }} virtually:</h2>
-            <img src="/static/images/video_placeholder.jpg" alt="Video Thumbnail" class="video-thumbnail" onclick="openVideoModal()">
-            <div class="modal" id="video-modal">
-                <video controls autoplay>
-                    <source src="/static/video/sample.mp4" type="video/mp4">
+            <h2>Visit Virtually</h2>
+            {% for video in video %}
+            <div class="video-container">
+                <video controls>
+                    <source src="{{ video.video }}" type="video/mp4">
+                    Your browser does not support the video tag.
                 </video>
-                <button onclick="closeVideoModal()">Close</button>
             </div>
+            {% endfor %}
         </div>
 
         <div class="downloads">
-            <button>Download Itinerary</button>
-            <button>Download Video</button>
+            <button class="submit-button">Download Itinerary</button>
+            <button class="submit-button">Download Video</button>
         </div>
 
         <div class="done-button">
             <form action="/" method="get">
-                <button type="submit">Done</button>
+                <button type="submit" class="submit-button">Done</button>
             </form>
         </div>
     </div>
 </body>
 <script>
-    function openVideoModal() {
-        document.getElementById('video-modal').style.display = 'block';
-    }
-
-    function closeVideoModal() {
-        document.getElementById('video-modal').style.display = 'none';
-    }
+    
 </script>
 </html>

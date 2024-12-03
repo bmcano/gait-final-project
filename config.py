@@ -15,3 +15,7 @@ MOCK_ITINERARIES = [
     {"title": "Adventure and Outdoors", "description": "Hiking, kayaking, and exploring the wilderness of the region.", "image": "/static/mock_images/adventure_outdoors.webp"},
     {"title": "Cultural Exploration", "description": "Visit famous landmarks, historical sites, and cultural experiences.", "image": "/static/mock_images/cultural_exploration.webp"}
 ]
+
+MOCK_VIDOES = [
+    {"video": "../static/mock_videos/relax_in_city.mp4"}
+]
