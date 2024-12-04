@@ -34,32 +34,35 @@
         <div class="done-button">
             <form action="/itinerary_details" method="post" id="doneForm">
                 <input type="hidden" name="selected_indices" id="selectedIndices">
+                <input type="hidden" name="selected_images" id="selectedImages">
                 <button type="submit" class="submit-button">Done</button>
             </form>
         </div>
     </div>
-
     <script>
-        // JavaScript to handle card selection
         const selectedIndices = new Set();
+        const selectedImages = new Set();
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Add change event listener to all checkboxes
             document.querySelectorAll(".checkbox").forEach((checkbox) => {
                 checkbox.addEventListener("change", (event) => {
                     const index = checkbox.getAttribute("data-index");
                     const card = document.querySelector(`.card[data-index='${index}']`);
+                    const imageUrl = card.querySelector(".itinerary-image").getAttribute("src");
 
                     if (checkbox.checked) {
                         selectedIndices.add(index);
+                        selectedImages.add(imageUrl);
                         card.classList.add("selected");
                     } else {
                         selectedIndices.delete(index);
+                        selectedImages.delete(imageUrl);
                         card.classList.remove("selected");
                     }
 
-                    // Update the hidden input field for form submission
+                    // Update the hidden input fields for form submission
                     document.getElementById("selectedIndices").value = Array.from(selectedIndices).join(",");
+                    document.getElementById("selectedImages").value = Array.from(selectedImages).join(",");
                 });
             });
         });

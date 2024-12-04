@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request
 import os
 from datetime import datetime
-from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDOES, MOCK_WEATHER_INFO
+from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDEOS, MOCK_WEATHER_INFO
+from merge_videos import merge_clips_no_transition
 from dotenv import load_dotenv
 import time
 from runwayml import RunwayML
@@ -29,6 +30,7 @@ def itineraries():
     """
     # Extract user inputs
     destination = request.form['destination']
+    description = request.form['description']
     from_date = request.form['fromDate']
     to_date = request.form['toDate']
     travel_dates = from_date + " to " + to_date
@@ -74,27 +76,32 @@ def itinerary_details():
     """
     Page showing detailed itinerary, weather, and packing suggestions.
     """
-    # Extract selected itinerary (index of selected card)
+    # TODO: Extract all selected items, and then prepare them for ChatGPT to make the itinerary with
     selected_index = request.form.get('selected_indices', '')
     selected_indices = [int(idx) for idx in selected_index.split(',') if idx.isdigit()]
     selected_itineraries = [MOCK_ITINERARIES[idx] for idx in selected_indices]
 
-    # Mock packing list
     # TODO: Use ChatGPT to dynamically generate packing suggestions based on destination, weather, and itinerary.
     packing_list = ["Sunscreen", "Comfortable shoes", "Hat", "Reusable water bottle"]
 
-    # TODO: Call generate_image function to create AI-generated images of landmarks or activities in the itinerary.
-    # Save the generated images in app.config['IMAGE_FOLDER'].
-    # Placeholder example for generated images:
-    generated_images = [
-        os.path.join(app.config['IMAGE_FOLDER'], 'image1.jpg'),
-        os.path.join(app.config['IMAGE_FOLDER'], 'image2.jpg')
-    ]
-
+    # Grab all selected images
+    selected_images = request.form.get('selected_images', '').split(',')
     if DEMO_MODE:
-        generated_video = MOCK_VIDOES
+        merged_video = [
+            {"video": MOCK_VIDEOS[0]}
+        ]
     else:
-        generated_video = [] # TODO
+        # convert all selected items into videos
+        index = 0
+        generated_videos = []
+        for image in selected_images:
+            index += 1 
+            video = generate_runway_video(image, "webp", f"video{1}.mp4")
+            generated_videos.append(video)
+        # merge all the videos together
+        merged_video = [
+            {"video": merge_clips_no_transition(MOCK_VIDEOS)}
+        ]
 
     # Pass mock or generated data to the template
     return render_template(
@@ -102,8 +109,7 @@ def itinerary_details():
         itinerary=selected_itineraries,
         weather=MOCK_WEATHER_INFO,  # Replace with dynamic weather_info once integrated
         packing_list=packing_list,
-        images=generated_images,  # Pass generated images here
-        video=generated_video
+        video=merged_video
     )
 
 # TODO: Define the generate_image function
