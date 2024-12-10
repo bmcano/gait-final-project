@@ -100,7 +100,7 @@ def itinerary_details():
             generated_videos.append(video)
         # merge all the videos together
         merged_video = [
-            {"video": merge_clips_no_transition(MOCK_VIDEOS)}
+            {"video": merge_clips_no_transition(generated_videos)}
         ]
 
     # Pass mock or generated data to the template
@@ -160,6 +160,7 @@ def generate_runway_video(image_path, image_tpye, output_filename):
 
     print('Task complete:', task)
     save_video(task.output[0], output_filename)
+    return output_filename
 
 """
 Helper functions relating to video generation 

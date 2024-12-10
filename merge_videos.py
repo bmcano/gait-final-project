@@ -12,7 +12,7 @@ def merge_clips_no_transition(video_paths):
     # Normalize videos to the same codec and format if needed
     normalized_files = []
     for i, video in enumerate(video_paths):
-        normalized_file = f"temp/video/temp_normalized_{i}.mp4"
+        normalized_file = f"temp/video/{i}"
         (
             ffmpeg
             .input(video)
