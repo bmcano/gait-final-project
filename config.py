@@ -22,11 +22,11 @@ MOCK_ITINERARIES = [
 ]
 
 MOCK_SELECTED_IMAGES = [
-    {"image": "/static/mock_images/relax_in_city.webp"},
-    {"image": "/static/mock_images/eiffel_tower.webp"}
+    {"image": "static/mock_images/relax_in_city.webp"},
+    {"image": "static/mock_images/eiffel_tower.webp"}
 ]
 
 MOCK_VIDEOS = [
-    "static/mock_videos/video1.mp4",
+    "static/mock_videos/final.mp4",
     "static/mock_videos/video2.mp4"
 ]
