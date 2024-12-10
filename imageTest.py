@@ -161,7 +161,7 @@ def generate_images_from_prompts(imagePrompt_List):
     :return: Dictionary mapping prompts to their generated image file paths.
     """
     # Configure the image storage folder. Create directory if it doesn't exist
-    IMAGE_FOLDER = "static/images"
+    IMAGE_FOLDER = "temp/images"
     if not os.path.exists(IMAGE_FOLDER):
         os.makedirs(IMAGE_FOLDER)
 
