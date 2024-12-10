@@ -113,7 +113,7 @@ def itinerary_details():
             generated_videos.append(video)
         # merge all the videos together
         merged_video = [
-            {"video": f"../{merge_clips_no_transition(generated_videos)}" }
+            {"video": f"{merge_clips_no_transition(generated_videos)}" }
         ]
 
     # Pass mock or generated data to the template
