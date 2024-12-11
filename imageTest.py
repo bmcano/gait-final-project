@@ -40,7 +40,7 @@ def validate_api_key():
     validate_api_key()
 
     # Configure the image storage folder
-    IMAGE_FOLDER = "static/images"
+    IMAGE_FOLDER = "static/temp/images"
     if not os.path.exists(IMAGE_FOLDER):
         os.makedirs(IMAGE_FOLDER)
 
