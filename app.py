@@ -6,7 +6,7 @@ import openai
 from flask import Flask, render_template, request
 import os
 from datetime import datetime
-from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDEOS, MOCK_WEATHER_INFO
+from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDEO, MOCK_WEATHER_INFO, MOCK_IMAGES
 from merge_videos import merge_clips_no_transition
 from dotenv import load_dotenv
 import time
@@ -52,24 +52,30 @@ def itineraries():
     # Store the result in `weather_info` and pass it to the frontend instead of MOCK_WEATHER_INFO.
     weather_info = MOCK_WEATHER_INFO
 
-    # TODO: Use ChatGPT to dynamically generate itineraries using destination, dates, and weather info
-    # Replace MOCK_ITINERARIES with actual data from ChatGPT's response.
-    itineraries = MOCK_ITINERARIES
+    if DEMO_MODE:
+        itineraries = MOCK_ITINERARIES
+        generated_images = MOCK_IMAGES
+    else:
+        itineraries = []
+        try:
+            prompt = create_must_see_attractions_prompt(destination)
+            mustSeeAttractions_List = generate_must_see_attractions_list(prompt)
+            # Convert to Python object
+            mustSeeAttractions_List = [(mustSeeAttractions_List)][0]
+            mustSeeAttractions_List = ast.literal_eval(f"[{mustSeeAttractions_List}]")
+            print(mustSeeAttractions_List)
 
-    # TODO: Get prompt from ChatGPT to generate images
-    try:
-        prompt = create_must_see_attractions_prompt(destination)
-        mustSeeAttractions_List = generate_must_see_attractions_list(prompt)
-        # Convert to Python object
-        mustSeeAttractions_List = [(mustSeeAttractions_List)][0]
-        mustSeeAttractions_List = ast.literal_eval(f"[{mustSeeAttractions_List}]")
-
-        imagePrompt_List = create_image_prompts(mustSeeAttractions_List, from_date, to_date)
-        
-        generated_images = generate_images_from_prompts(imagePrompt_List)
-    
-    except Exception as e:
-        print("Error:", e)
+            imagePrompt_List = create_image_prompts(mustSeeAttractions_List, from_date, to_date)
+            generated_images = list(generate_images_from_prompts(imagePrompt_List).values())
+            print(generated_images)
+            for i in range(len(mustSeeAttractions_List)):
+                itineraries.append({ 
+                    "title": mustSeeAttractions_List[i][0], 
+                    "description": f"{mustSeeAttractions_List[i][1]} {mustSeeAttractions_List[i][2]}",
+                    "image": generated_images[i]
+                })
+        except Exception as e:
+            print("Error:", e)
     
     # Pass mock or generated data to the template
     return render_template(
@@ -79,8 +85,8 @@ def itineraries():
         to_date=to_date,
         travel_dates=travel_dates,
         trip_duration=trip_duration,
-        itineraries=itineraries,  # Pass generated itineraries here
-        images=generated_images  # Pass generated images to the frontend
+        itineraries=itineraries,
+        images=generated_images
     )
 
 @app.route('/itinerary_details', methods=['POST'])
@@ -98,10 +104,10 @@ def itinerary_details():
 
     # Grab all selected images
     selected_images = request.form.get('selected_images', '').split(',')
-    updated_paths = [path[1:] for path in selected_images]
+    updated_paths = selected_images
     if DEMO_MODE:
         merged_video = [
-            {"video": MOCK_VIDEOS[0]}
+            {"video": MOCK_VIDEO}
         ]
     else:
         # convert all selected items into videos
@@ -109,7 +115,7 @@ def itinerary_details():
         generated_videos = []
         for i, image in enumerate(updated_paths):
             index += 1 
-            video = generate_runway_video(image, "webp", f"video{i}")
+            video = generate_runway_video(image, "png", f"video{i}")
             generated_videos.append(video)
         # merge all the videos together
         merged_video = [
@@ -124,11 +130,6 @@ def itinerary_details():
         packing_list=packing_list,
         video=merged_video
     )
-
-# TODO: Define the generate_image function
-# Use this function to integrate an AI image generation API (e.g., DALL-E, Stable Diffusion, etc.).
-# Input: Key points of interest or landmarks from the itinerary.
-# Output: Save generated images in app.config['IMAGE_FOLDER'] and return their file paths.
 
 # ---------- PROMPT GENERATION + IMAGE GENERATION ------------------
 
@@ -205,7 +206,7 @@ def create_image_prompts(mustSeeAttractions, fromDate, toDate):
     return prompts
 
 # STEP 4: Takes the list of 5 image prompts for user's destination, and using OpenAI API
-# call, 5 images are generated and saved in the temp/images directory
+# call, 5 images are generated and saved in the static/temp/images directory
 def generate_images_from_prompts(imagePrompt_List):
     """
     Generate images using OpenAI's DALL-E model based on a list of prompts.
@@ -213,7 +214,7 @@ def generate_images_from_prompts(imagePrompt_List):
     :return: Dictionary mapping prompts to their generated image file paths.
     """
     # Configure the image storage folder. Create directory if it doesn't exist
-    IMAGE_FOLDER = "temp/images"
+    IMAGE_FOLDER = "static/temp/images"
     if not os.path.exists(IMAGE_FOLDER):
         os.makedirs(IMAGE_FOLDER)
 
@@ -244,7 +245,8 @@ def generate_images_from_prompts(imagePrompt_List):
             # Generate a short and unique filename using a hash of the prompt
             hash_object = hashlib.md5(prompt.encode())
             file_name = f"{hash_object.hexdigest()}.png"
-            file_path = os.path.join(IMAGE_FOLDER, file_name)
+            # file_path = os.path.join(IMAGE_FOLDER, file_name)
+            file_path = f"{IMAGE_FOLDER}/{file_name}"
 
             # Save the image to the specified folder
             image = Image.open(BytesIO(image_response.content))
@@ -274,16 +276,14 @@ def generate_runway_video(image_path, image_tpye, output_filename):
     :output_filename: The name of the temporary output video
     """
     if DEMO_MODE:
-        print("using file in DEMO_MODE")
-        return
-
+        print("using program in DEMO_MODE - no video generation")
+        return "static/mock_videos/video2.mp4"
+    
+    print("start video generation - for debug purpose")
     client = RunwayML()
-    print("start")
-    # Create a new image-to-video task using the "gen3a_turbo" model
     base64_image = encode_image_to_base64(image_path)
     task = client.image_to_video.create(
         model='gen3a_turbo',
-        # Point this at your own image file
         prompt_image=f"data:image/{image_tpye};base64,{base64_image}",
         prompt_text='Drone-like hovering movement of the given scene',
         duration=5
@@ -301,18 +301,16 @@ def generate_runway_video(image_path, image_tpye, output_filename):
     save_video(task.output[0], output_filename)
     return f"static/temp/video/{output_filename}.mp4"
 
-"""
-Helper functions relating to video generation 
-"""
+#
+# ---------- VIDEO GENERATION HELPER FUNCTIONS ---------- 
+#
 def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
     return encoded_string
 
 def save_video(video_url, output_filename):
-    # Send a GET request to the video URL
     response = requests.get(video_url, stream=True)
-    # Check if the request was successful
     if response.status_code == 200:
         # Open a file in binary write mode and save the video content
         with open(f"static/temp/video/{output_filename}.mp4", "wb") as video_file:

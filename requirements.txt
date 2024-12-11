@@ -1,7 +1,7 @@
 flask
-ffmpeg
+ffmpeg-python
 requests
 geopy
 python-dotenv
 runwayml
-openai==0.28
+openai
