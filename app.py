@@ -48,19 +48,22 @@ def itineraries():
     except ValueError:
         return "Invalid date format. Please ensure dates are in YYYY-MM-DD format."
 
-    # TODO: Use destination and dates to call the weather API and retrieve weather info.
-    # Store the result in `weather_info` and pass it to the frontend instead of MOCK_WEATHER_INFO.
-    weather_info = MOCK_WEATHER_INFO
-
     if DEMO_MODE:
+        weather_info = MOCK_WEATHER_INFO
         itineraries = MOCK_ITINERARIES
         generated_images = MOCK_IMAGES
     else:
         itineraries = []
+        weather = {}
+        packing_list = []
         try:
-            prompt = create_must_see_attractions_prompt(destination)
+            attraction_prompt = create_must_see_attractions_prompt(destination)
             mustSeeAttractions_List = generate_must_see_attractions_list(prompt)
+            weather_prompt = create_weather_and_packing_list(destination, from_date, to_date)
+            weather_and_packing_info = generate_weather_and_packing_list(weather_prompt)
             # Convert to Python object
+            weather_and_packing_info = ast.literal_eval(f"[{weather_and_packing_info}]")
+            print(weather_and_packing_info)
             mustSeeAttractions_List = [(mustSeeAttractions_List)][0]
             mustSeeAttractions_List = ast.literal_eval(f"[{mustSeeAttractions_List}]")
             print(mustSeeAttractions_List)
@@ -74,6 +77,19 @@ def itineraries():
                     "description": f"{mustSeeAttractions_List[i][1]} {mustSeeAttractions_List[i][2]}",
                     "image": generated_images[i]
                 })
+            for key, value in weather_and_packing_info:
+                if key == 'conditions':
+                    weather_info['condition'] = value
+                elif key == 'average_high':
+                    weather_info['average_high'] = value
+                elif key == 'average_low':
+                    weather_info['average_low'] = value
+                elif key.startswith('Item'):
+                    packing_list.append(value)
+            print("weather_info")
+            print(weather_info)
+            print("parking_list")
+            print(packing_list)
         except Exception as e:
             print("Error:", e)
     
@@ -132,6 +148,57 @@ def itinerary_details():
     )
 
 # ---------- PROMPT GENERATION + IMAGE GENERATION ------------------
+def create_weather_and_packing_list(destination, description, from_date, to_date):
+    """
+    Generate an OpenAI prompt to create a list of must-see attractions for the given destination,
+    and also provide expected weather conditions, average temperatures for those dates, and a recommended packing list.
+    """
+
+    prompt = f"""
+    You are a travel expert. For travelers visiting {destination} from {from_date} to {to_date} wanting to have a trip with the following description: {description}, 
+    do the following:
+
+    1. Based on historical weather data for {destination} during this time of year, 
+    provide an expected weather outlook. Describe the general weather conditions 
+    (e.g., mostly sunny, occasional rain), and include approximate average high and low temperatures 
+    in Celsius.
+
+    2. Based on the expected weather, generate a comprehensive packing list that would be suitable 
+    for someone visiting during this period. Include items that are both weather-appropriate and 
+    generally useful for exploring the attractions.
+
+
+    The expected format is:
+    ('conditions', 'Sunny with clear skies'),('average_high', '25C'),('average_low', '15C'),('Item 1', 'Heavy Coat'),('Item 2', 'Boots'),('Item 3', 'Sunglasses'),('Item 4', 'Sunscreen'),('Item 5', 'Hat'),('Item 6', 'Reusable Water Bottle')
+
+    Ensure that the output follows Python syntax strictly, with all strings enclosed in double quotes (`"`), and no special characters (e.g., single quotes, backslashes) causing invalid syntax. And no next-line character after each tuple. 
+    """
+
+    return prompt
+
+def generate_weather_and_packing_list(prompt):
+    """
+    Generate a list of must-see attractions for the given destination using OpenAI API.
+
+    :param prompt: The prompt to generate the list of attractions.
+    :return: A list of must-see attractions for the destination.
+    """
+    client = openai.OpenAI()
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+
+    response = completion.choices[0].message
+    return response.content
+
 
 # STEP 1 : create the prompt using user's 'destination'
 def create_must_see_attractions_prompt(destination):
