@@ -53,6 +53,7 @@ def itineraries():
     weather_info = MOCK_WEATHER_INFO
 
     if DEMO_MODE:
+        time.sleep(5) # To mock a load time
         itineraries = MOCK_ITINERARIES
         generated_images = MOCK_IMAGES
     else:
@@ -106,6 +107,7 @@ def itinerary_details():
     selected_images = request.form.get('selected_images', '').split(',')
     updated_paths = selected_images
     if DEMO_MODE:
+        time.sleep(5) # To mock a load time
         merged_video = [
             {"video": MOCK_VIDEO}
         ]
@@ -325,5 +327,13 @@ if __name__ == '__main__':
     # Ensure required directories exist
     os.makedirs(app.config['IMAGE_FOLDER'], exist_ok=True)
     os.makedirs(app.config['VIDEO_FOLDER'], exist_ok=True)
+
+    # Remove old temp files on project startup 
+    directory_paths = ["static/temp/video", "static/temp/images"]
+    for directory_path in directory_paths:
+        for filename in os.listdir(directory_path):
+            file_path = os.path.join(directory_path, filename)
+            os.remove(file_path)
+
     load_dotenv()
     app.run(debug=True)
