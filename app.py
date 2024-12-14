@@ -6,7 +6,7 @@ import openai
 from flask import Flask, render_template, request
 import os
 from datetime import datetime
-from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDEO, MOCK_WEATHER_INFO, MOCK_IMAGES
+from config import DEMO_MODE, MOCK_ITINERARIES, MOCK_VIDEO, MOCK_WEATHER_INFO, MOCK_IMAGES, MOCK_PACKING_LIST
 from merge_videos import merge_clips_no_transition
 from dotenv import load_dotenv
 import time
@@ -49,6 +49,7 @@ def itineraries():
         return "Invalid date format. Please ensure dates are in YYYY-MM-DD format."
 
     if DEMO_MODE:
+        packing_list = MOCK_PACKING_LIST
         weather_info = MOCK_WEATHER_INFO
         itineraries = MOCK_ITINERARIES
         generated_images = MOCK_IMAGES
@@ -102,7 +103,9 @@ def itineraries():
         travel_dates=travel_dates,
         trip_duration=trip_duration,
         itineraries=itineraries,
-        images=generated_images
+        images=generated_images,
+        weather_info=str(weather_info),
+        packing_list=str(packing_list) 
     )
 
 @app.route('/itinerary_details', methods=['POST'])
@@ -111,13 +114,15 @@ def itinerary_details():
     Page showing detailed itinerary, weather, and packing suggestions.
     """
     # TODO: Extract all selected items, and then prepare them for ChatGPT to make the itinerary with
+    weather_info = ast.literal_eval(request.form.get('weather_info', '{}'))
+    print("Weather Info:", weather_info)
     selected_index = request.form.get('selected_indices', '')
     selected_indices = [int(idx) for idx in selected_index.split(',') if idx.isdigit()]
     selected_itineraries = [MOCK_ITINERARIES[idx] for idx in selected_indices]
 
     # TODO: Use ChatGPT to dynamically generate packing suggestions based on destination, weather, and itinerary.
-    packing_list = ["Sunscreen", "Comfortable shoes", "Hat", "Reusable water bottle"]
-
+    packing_list = ast.literal_eval(request.form.get('packing_list', '[]'))
+    print("Packing List:", packing_list)
     # Grab all selected images
     selected_images = request.form.get('selected_images', '').split(',')
     updated_paths = selected_images
@@ -142,7 +147,7 @@ def itinerary_details():
     return render_template(
         'itinerary_details.html',
         itinerary=selected_itineraries,
-        weather=MOCK_WEATHER_INFO,  # Replace with dynamic weather_info once integrated
+        weather=weather_info,
         packing_list=packing_list,
         video=merged_video
     )

@@ -33,6 +33,8 @@
 
         <div class="done-button">
             <form action="/itinerary_details" method="post" id="doneForm">
+                <input type="hidden" name="weather_info" value="{{ weather_info }}">
+                <input type="hidden" name="packing_list" value="{{ packing_list }}">
                 <input type="hidden" name="selected_indices" id="selectedIndices">
                 <input type="hidden" name="selected_images" id="selectedImages">
                 <button type="submit" class="submit-button">Done</button>

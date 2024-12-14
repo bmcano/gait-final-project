@@ -27,3 +27,5 @@ MOCK_IMAGES = [
 ]
 
 MOCK_VIDEO = "static/mock_videos/final.mp4"
+
+MOCK_PACKING_LIST = ["Sunscreen", "Comfortable shoes", "Hat", "Reusable water bottle"]
