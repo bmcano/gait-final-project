@@ -5,3 +5,4 @@ geopy
 python-dotenv
 runwayml
 openai
+reportlab

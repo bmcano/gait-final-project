@@ -37,6 +37,8 @@
                 <input type="hidden" name="packing_list" value="{{ packing_list }}">
                 <input type="hidden" name="selected_indices" id="selectedIndices">
                 <input type="hidden" name="selected_images" id="selectedImages">
+                <input type="hidden" name="selected_attractions" id="selectedAttractions">
+                <input type="hidden" name="selected_descriptions" id="selectedDescriptions">
                 <button type="submit" class="submit-button">Done</button>
             </form>
         </div>
@@ -44,31 +46,42 @@
     <script>
         const selectedIndices = new Set();
         const selectedImages = new Set();
-
+        const selectedAttractions = new Set();
+        const selectedDescriptions = new Set();
+    
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(".checkbox").forEach((checkbox) => {
                 checkbox.addEventListener("change", (event) => {
                     const index = checkbox.getAttribute("data-index");
                     const card = document.querySelector(`.card[data-index='${index}']`);
                     const imageUrl = card.querySelector(".itinerary-image").getAttribute("src");
-
+                    const title = card.querySelector(".title-section h2").textContent;
+                    const description = card.querySelector(".description").textContent;
+    
                     if (checkbox.checked) {
                         selectedIndices.add(index);
                         selectedImages.add(imageUrl);
+                        selectedAttractions.add(title.trim())
+                        selectedDescriptions.add(description.trim())
                         card.classList.add("selected");
                     } else {
                         selectedIndices.delete(index);
                         selectedImages.delete(imageUrl);
+                        selectedAttractions.delete(title.trim())
+                        selectedDescriptions.delete(description.trim())
                         card.classList.remove("selected");
                     }
-
+    
                     // Update the hidden input fields for form submission
                     document.getElementById("selectedIndices").value = Array.from(selectedIndices).join(",");
                     document.getElementById("selectedImages").value = Array.from(selectedImages).join(",");
+                    document.getElementById("selectedAttractions").value = Array.from(selectedAttractions).join(",");
+                    document.getElementById("selectedDescriptions").value = Array.from(selectedDescriptions).join(",");
                 });
             });
         });
     </script>
+    
 </body>
 
 </html>
