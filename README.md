@@ -4,6 +4,12 @@ The **AI-Powered Personalized Travel Itinerary Generator** is a Flask-based web 
 
 This was our final group project for **ECE:5995 - Generative AI Tools** at the University of Iowa during the Fall 2024 semester.
 
+This group project had four members:
+- Brandon Cano
+- Meesam Amir Syed
+- Kasra Shahrivar
+- Rutger Schleyhahn
+
 ## Features
 
 - **Personalized Itineraries**: Tailored trip plans based on user preferences like destination, dates, and interests.
