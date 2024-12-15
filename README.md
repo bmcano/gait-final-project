@@ -44,3 +44,7 @@ https://ffmpeg.org/download.html
     ```bash
     python app.py
     ```
+
+### Demo Video
+
+Since GitHub doesn't support video embedding [click here to download the video](https://github.com/bmcano/gait-final-project/blob/main/submission/gait_demo_720p.mp4).
