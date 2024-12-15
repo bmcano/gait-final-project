@@ -17,7 +17,8 @@
 
         <div class="weather">
             <h2>Weather Information</h2>
-            <p><strong>Temperature:</strong> {{ weather.temperature }}</p>
+            <p><strong>Average High Temperature: </strong> {{ weather.average_high }}</p>
+            <p><strong>Average Low Temperature: </strong> {{ weather.average_low }}</p>
             <p><strong>Condition:</strong> {{ weather.condition }}</p>
         </div>
 
@@ -43,7 +44,10 @@
         </div>
 
         <div class="downloads">
-            <button class="submit-button">Download Itinerary</button>
+            <button class="submit-button">
+                <a href="{{ pdf_path }}" download="Travel_Itinerary.pdf"
+                    style="text-decoration: none; color: inherit;">Download Itinerary as PDF</a>
+            </button>
             <button class="submit-button">
                 <a href="{{ video[0].video }}" download="itinerary_video.mp4"
                     style="text-decoration: none; color: inherit;">Download Video</a>

@@ -6,7 +6,8 @@ DEMO_MODE = True
 
 # Mock Data - These values will be used when DEMO_MODE is set to True.
 MOCK_WEATHER_INFO = {
-    "temperature": "25°C",
+    "average_high": "25°C",
+    "average_low": "15°C",
     "condition": "Sunny with clear skies"
 }
 
@@ -27,3 +28,5 @@ MOCK_IMAGES = [
 ]
 
 MOCK_VIDEO = "static/mock_videos/final.mp4"
+
+MOCK_PACKING_LIST = ["Sunscreen", "Comfortable shoes", "Hat", "Reusable water bottle"]
