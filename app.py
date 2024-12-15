@@ -59,6 +59,7 @@ def itineraries():
     else:
         itineraries = []
         packing_list = []
+        weather_info = {}
         try:
             # generate attractions from destination
             attraction_prompt = create_must_see_attractions_prompt(destination)
