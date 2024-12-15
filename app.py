@@ -55,11 +55,10 @@ def itineraries():
         generated_images = MOCK_IMAGES
     else:
         itineraries = []
-        weather = {}
         packing_list = []
         try:
             attraction_prompt = create_must_see_attractions_prompt(destination)
-            mustSeeAttractions_List = generate_must_see_attractions_list(prompt)
+            mustSeeAttractions_List = generate_must_see_attractions_list(attraction_prompt)
             weather_prompt = create_weather_and_packing_list(destination, from_date, to_date)
             weather_and_packing_info = generate_weather_and_packing_list(weather_prompt)
             # Convert to Python object
