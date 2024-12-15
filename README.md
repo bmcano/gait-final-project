@@ -53,4 +53,4 @@ https://ffmpeg.org/download.html
 
 ### Demo Video
 
-Since GitHub doesn't support video embedding [click here to download the video](https://github.com/bmcano/gait-final-project/blob/main/submission/gait_demo_720p.mp4).
+Since GitHub doesn't support video embedding [click here to download the video](https://github.com/bmcano/gait-final-project/blob/main/docs/gait_demo_720p.mp4).
